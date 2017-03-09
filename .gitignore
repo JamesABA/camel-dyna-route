@@ -1,0 +1,8 @@
+#gitignore for cameldynaroute
+#ignore target folder, class files, intellij metadata, and logs.
+
+**/.class
+target/**
+logs/**
+.idea/**
+*.iml

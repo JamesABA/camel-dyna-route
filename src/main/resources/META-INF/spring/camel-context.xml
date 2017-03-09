@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Configures the Camel Context-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+
+    <camelContext id="context" xmlns="http://camel.apache.org/schema/spring">
+
+        <!-- Get the contents of a file which contains a Spring DSL route -->
+        <route id="fileToDirect">
+            <from uri="file:src/data?noop=true"/>
+            <to uri="direct:routeSender"/>
+        </route>
+
+        <!-- ignore all the complexity of the real scenario and use a 'direct' endpoint to
+          simulate a webservice call between integration tier and GW tier -->
+        <route id="directToDummyController">
+            <from uri="direct:routeSender"/>
+            <to uri="log:com.businessagility.poc.cameldynaroute?showAll=true&amp;multiline=true&amp;level=DEBUG"/>
+            <!-- pass the XML route String to a bean that adds the route to the current context -->
+            <bean ref="dummyController" method="setNewRoute"/>
+            <log message="Added new route ${body}"/>
+        </route>
+
+    </camelContext>
+
+    <bean id="dummyController" class="com.businessagility.poc.DummyController" autowire="byType"/>
+
+</beans>
